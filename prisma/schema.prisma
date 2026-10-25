@@ -1,0 +1,170 @@
+generator client {
+  provider = "prisma-client-js"
+}
+datasource db {
+  provider = "postgresql"
+  url = env("DATABASE_URL")
+}
+
+enum EventStatus {
+  UPCOMING
+  LIVE
+  PAST
+}
+enum VotingState {
+  DRAFT
+  SCHEDULED
+  OPEN
+  CLOSED
+  RESULTS
+}
+enum Role {
+  ADMIN
+  EDITOR
+}
+
+model Event {
+  id String @id @default(cuid())
+  slug String @unique
+  year Int
+  city String
+  country String
+  localName String?
+  startsAt DateTime?
+  venue String?
+  status EventStatus @default(UPCOMING)
+  accent String @default("#c8102e")
+  titleI18n Json
+  descriptionI18n Json?
+  participants Participant[]
+  voting Voting?
+  tickets Ticket[]
+  news News[]
+  albums Album[]
+  videos Video[]
+  winner Winner?
+}
+model Participant {
+  id String @id @default(cuid())
+  eventId String
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  name String
+  countryCode String
+  song String
+  bioI18n Json?
+  runningOrder Int?
+  sortOrder Int @default(0)
+  photoUrl String?
+  videoUrl String?
+  socials Json?
+  visible Boolean @default(true)
+  featured Boolean @default(false)
+  votes Vote[]
+}
+model Voting {
+  id String @id @default(cuid())
+  eventId String @unique
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  state VotingState @default(DRAFT)
+  opensAt DateTime?
+  closesAt DateTime?
+  verification String @default("EMAIL")
+  resultsPublishedAt DateTime?
+  showVoteCounts Boolean @default(false)
+  votes Vote[]
+}
+model Vote {
+  id String @id @default(cuid())
+  votingId String
+  voting Voting @relation(fields: [votingId], references: [id], onDelete: Cascade)
+  participantId String
+  participant Participant @relation(fields: [participantId], references: [id])
+  emailHash String
+  confirmedAt DateTime?
+  tokenHash String
+  createdAt DateTime @default(now())
+  @@unique([votingId, emailHash])
+}
+model Ticket {
+  id String @id @default(cuid())
+  eventId String
+  event Event @relation(fields: [eventId], references: [id])
+  number String @unique
+  firstName String
+  lastName String
+  email String
+  status String @default("ISSUED")
+  emailSentAt DateTime?
+  createdAt DateTime @default(now())
+  @@index([email])
+}
+model News {
+  id String @id @default(cuid())
+  eventId String?
+  event Event? @relation(fields: [eventId], references: [id])
+  slug String @unique
+  titleI18n Json
+  excerptI18n Json?
+  bodyI18n Json?
+  coverUrl String?
+  videoUrl String?
+  links Json?
+  seo Json?
+  published Boolean @default(false)
+  publishedAt DateTime?
+}
+model Album {
+  id String @id @default(cuid())
+  eventId String?
+  event Event? @relation(fields: [eventId], references: [id])
+  titleI18n Json
+  published Boolean @default(false)
+  photos Photo[]
+}
+model Photo {
+  id String @id @default(cuid())
+  albumId String
+  album Album @relation(fields: [albumId], references: [id], onDelete: Cascade)
+  url String
+  captionI18n Json?
+  sortOrder Int @default(0)
+}
+model Video {
+  id String @id @default(cuid())
+  eventId String?
+  event Event? @relation(fields: [eventId], references: [id])
+  url String
+  posterUrl String?
+  titleI18n Json?
+  published Boolean @default(true)
+}
+model Winner {
+  id String @id @default(cuid())
+  eventId String @unique
+  event Event @relation(fields: [eventId], references: [id])
+  name String
+  song String?
+  photoUrl String?
+  notesI18n Json?
+}
+model AdminUser {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String
+  role Role @default(ADMIN)
+}
+model SiteSetting {
+  key String @id
+  value Json
+}
+model Translation {
+  key String @id
+  ru String?
+  en String?
+}
+model Backup {
+  id String @id @default(cuid())
+  createdAt DateTime @default(now())
+  fileUrl String?
+  sizeBytes Int?
+}
