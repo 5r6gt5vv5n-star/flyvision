@@ -4950,3 +4950,28 @@ a { text-decoration: none; color: inherit; }
   margin: 0 auto;
   text-align: center;            /* ← ИЗМЕНИЛИ: было left, стало center */
 }
+/* ============================================================
+   ГЛОБАЛЬНЫЙ ХЕДЕР (Header.tsx) — фиолетовая тема
+   ============================================================ */
+
+/* Кнопки меню (Пекин 2027, Узнать) — фиолетовые при наведении и открытии */
+.header-bar .nav-btn:hover,
+.header-bar .nav-btn[aria-expanded="true"] {
+  color: #8a6bff;
+}
+
+/* Ссылки в раскрытом меню — фиолетовые при наведении */
+.header-bar .glass-column a:hover {
+  color: #8a6bff;
+}
+
+/* Заголовки колонок в меню (ПЕКИН 2027, ПРИНЯТЬ УЧАСТИЕ, ИСТОРИЯ) — фиолетовые */
+.header-bar .glass-column .col-head,
+.header-bar .glass-column span.col-head {
+  color: rgba(138, 107, 255, 0.85) !important;
+}
+
+/* Иконка профиля — фиолетовая при наведении */
+.header-bar .auth-icon:hover {
+  color: var(--gold-bright); /* или #8a6bff, если хочешь фиолетовый */
+}
