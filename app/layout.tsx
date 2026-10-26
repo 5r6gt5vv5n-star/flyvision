@@ -1,23 +1,27 @@
-import type { Metadata } from “next”;
-import “@fontsource/akt”;
-import “./globals.css”;
-import Header from “@/components/Header”;
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import "./globals.css";
+
+const inter = Inter({ subsets: ["latin", "cyrillic"] });
 
 export const metadata: Metadata = {
-title: “Flyvision”,
-description: “Flyvision Song Contest”,
-icons: {
-icon: “/heart-logo.png”,
-apple: “/heart-logo.png”,
-},
+  title: "Flyvision",
+  description: "Flyvision Song Contest",
+  icons: {
+    icon: "/images/heart-logo.png",
+    shortcut: "/images/heart-logo.png",
+    apple: "/images/heart-logo.png",
+  },
 };
 
 export default function RootLayout({
-children,
-}: {
-children: React.ReactNode;
-}) {
-return (
-{children}
-);
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="ru">
+      <body className={inter.className}>{children}</body>
+    </html>
+  );
 }
